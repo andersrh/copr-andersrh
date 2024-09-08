@@ -39,11 +39,11 @@
 %endif
 
 %ifarch aarch64 x86_64 %{ix86}
+%global with_kmsro     1
 %if !0%{?rhel}
 %global with_lima      1
 %global with_vc4       1
 %global with_etnaviv   1
-%global with_kmsro     1
 %global with_tegra     1
 %endif
 %global with_freedreno 1
@@ -71,7 +71,7 @@
 
 Name:           mesa
 Summary:        Mesa graphics libraries
-%global ver 24.2.1
+%global ver 24.2.2
 Version:        %{lua:ver = string.gsub(rpm.expand("%{ver}"), "-", "~"); print(ver)}
 Release:        10.clang%{?dist}
 License:        MIT AND BSD-3-Clause AND SGI-B-2.0
@@ -84,6 +84,7 @@ Source0:        https://archive.mesa3d.org/mesa-%{ver}.tar.xz
 Source1:        https://src.fedoraproject.org/rpms/mesa/raw/rawhide/f/Mesa-MLAA-License-Clarification-Email.txt
 
 Patch10:        https://src.fedoraproject.org/rpms/mesa/raw/rawhide/f/gnome-shell-glthread-disable.patch
+Patch11:        https://src.fedoraproject.org/rpms/mesa/raw/rawhide/f/rhbz2270430.patch
 
 BuildRequires:  meson >= 1.3.0
 BuildRequires:  gcc
@@ -96,7 +97,7 @@ BuildRequires:  kernel-headers
 # We only check for the minimum version of pkgconfig(libdrm) needed so that the
 # SRPMs for each arch still have the same build dependencies. See:
 # https://bugzilla.redhat.com/show_bug.cgi?id=1859515
-BuildRequires:  pkgconfig(libdrm) >= 2.4.119
+BuildRequires:  pkgconfig(libdrm) >= 2.4.121
 %if 0%{?with_libunwind}
 BuildRequires:  pkgconfig(libunwind)
 %endif
@@ -387,6 +388,7 @@ Requires:       %{name}-libd3d%{?_isa} = %{?epoch:%{epoch}:}%{version}-%{release
 %package vulkan-drivers
 Summary:        Mesa Vulkan drivers
 Requires:       vulkan%{_isa}
+Requires:       %{name}-filesystem%{?_isa} = %{?epoch:%{epoch}:}%{version}-%{release}
 Obsoletes:      mesa-vulkan-devel < %{?epoch:%{epoch}:}%{version}-%{release}
 
 %description vulkan-drivers
@@ -497,16 +499,13 @@ popd
 %files filesystem
 %doc docs/Mesa-MLAA-License-Clarification-Email.txt
 %dir %{_libdir}/dri
-%if 0%{?with_hardware}
-%if 0%{?with_vdpau}
-%dir %{_libdir}/vdpau
-%endif
-%endif
+%dir %{_datadir}/drirc.d
 
 %files libGL
 %{_libdir}/libGLX_mesa.so.0*
 %{_libdir}/libGLX_system.so.0*
 %files libGL-devel
+%dir %{_includedir}/GL
 %dir %{_includedir}/GL/internal
 %{_includedir}/GL/internal/dri_interface.h
 %{_libdir}/pkgconfig/dri.pc
@@ -586,7 +585,6 @@ popd
 %endif
 
 %files dri-drivers
-%dir %{_datadir}/drirc.d
 %{_datadir}/drirc.d/00-mesa-defaults.conf
 %{_libdir}/libgallium-*.so
 %{_libdir}/dri/kms_swrast_dri.so
@@ -705,6 +703,7 @@ popd
 
 %if 0%{?with_vdpau}
 %files vdpau-drivers
+%dir %{_libdir}/vdpau
 %{_libdir}/vdpau/libvdpau_gallium.so.1*
 %{_libdir}/vdpau/libvdpau_nouveau.so.1*
 %if 0%{?with_r600}
@@ -747,3 +746,6 @@ popd
 %{_datadir}/vulkan/icd.d/powervr_mesa_icd.*.json
 %endif
 %endif
+
+%changelog
+%autochangelog
