@@ -12,7 +12,6 @@
 %if 0%{?with_vulkan_hw}
 %global with_nvk %{with_vulkan_hw}
 %endif
-%global with_omx 1
 %global with_opencl 1
 %endif
 %global base_vulkan %{?with_vulkan_hw:,amd}%{!?with_vulkan_hw:%{nil}}
@@ -71,7 +70,7 @@
 
 Name:           mesa
 Summary:        Mesa graphics libraries
-%global ver 24.2.2
+%global ver 24.2.3
 Version:        %{lua:ver = string.gsub(rpm.expand("%{ver}"), "-", "~"); print(ver)}
 Release:        10.clang%{?dist}
 License:        MIT AND BSD-3-Clause AND SGI-B-2.0
@@ -84,7 +83,6 @@ Source0:        https://archive.mesa3d.org/mesa-%{ver}.tar.xz
 Source1:        https://src.fedoraproject.org/rpms/mesa/raw/rawhide/f/Mesa-MLAA-License-Clarification-Email.txt
 
 Patch10:        https://src.fedoraproject.org/rpms/mesa/raw/rawhide/f/gnome-shell-glthread-disable.patch
-Patch11:        https://src.fedoraproject.org/rpms/mesa/raw/rawhide/f/rhbz2270430.patch
 
 BuildRequires:  meson >= 1.3.0
 BuildRequires:  gcc
@@ -97,7 +95,7 @@ BuildRequires:  kernel-headers
 # We only check for the minimum version of pkgconfig(libdrm) needed so that the
 # SRPMs for each arch still have the same build dependencies. See:
 # https://bugzilla.redhat.com/show_bug.cgi?id=1859515
-BuildRequires:  pkgconfig(libdrm) >= 2.4.121
+BuildRequires:  pkgconfig(libdrm) >= 2.4.122
 %if 0%{?with_libunwind}
 BuildRequires:  pkgconfig(libunwind)
 %endif
@@ -138,9 +136,6 @@ BuildRequires:  pkgconfig(vdpau) >= 1.1
 %endif
 %if 0%{?with_va}
 BuildRequires:  pkgconfig(libva) >= 0.38.0
-%endif
-%if 0%{?with_omx}
-BuildRequires:  pkgconfig(libomxil-bellagio)
 %endif
 BuildRequires:  pkgconfig(libelf)
 BuildRequires:  pkgconfig(libglvnd) >= 1.3.2
@@ -190,6 +185,7 @@ BuildRequires:  pkgconfig(vulkan)
 %package filesystem
 Summary:        Mesa driver filesystem
 Provides:       mesa-dri-filesystem = %{?epoch:%{epoch}:}%{version}-%{release}
+Obsoletes:      mesa-omx-drivers < %{?epoch:%{epoch}:}%{version}-%{release}
 
 %description filesystem
 %{summary}.
@@ -245,15 +241,6 @@ Recommends:     %{name}-va-drivers%{?_isa}
 
 %description dri-drivers
 %{summary}.
-
-%if 0%{?with_omx}
-%package omx-drivers
-Summary:        Mesa-based OMX drivers
-Requires:       %{name}-filesystem%{?_isa} = %{?epoch:%{epoch}:}%{version}-%{release}
-
-%description omx-drivers
-%{summary}.
-%endif
 
 %if 0%{?with_va}
 %package        va-drivers
@@ -431,7 +418,6 @@ export MESON_PACKAGE_CACHE_DIR="%{cargo_registry}/"
   -Dgallium-drivers=swrast,virgl \
 %endif
   -Dgallium-vdpau=%{?with_vdpau:enabled}%{!?with_vdpau:disabled} \
-  -Dgallium-omx=%{?with_omx:bellagio}%{!?with_omx:disabled} \
   -Dgallium-va=%{?with_va:enabled}%{!?with_va:disabled} \
   -Dgallium-xa=%{?with_xa:enabled}%{!?with_xa:disabled} \
   -Dgallium-nine=%{?with_nine:true}%{!?with_nine:false} \
@@ -683,14 +669,8 @@ popd
 %{_libdir}/dri/zink_dri.so
 %endif
 
-%if 0%{?with_omx}
-%files omx-drivers
-%{_libdir}/bellagio/libomx_mesa.so
-%endif
-
 %if 0%{?with_va}
 %files va-drivers
-%{_libdir}/dri/libgallium_drv_video.so
 %{_libdir}/dri/nouveau_drv_video.so
 %if 0%{?with_r600}
 %{_libdir}/dri/r600_drv_video.so
@@ -704,7 +684,6 @@ popd
 %if 0%{?with_vdpau}
 %files vdpau-drivers
 %dir %{_libdir}/vdpau
-%{_libdir}/vdpau/libvdpau_gallium.so.1*
 %{_libdir}/vdpau/libvdpau_nouveau.so.1*
 %if 0%{?with_r600}
 %{_libdir}/vdpau/libvdpau_r600.so.1*
