@@ -63,14 +63,13 @@
 %bcond_with valgrind
 %endif
 
-%global vulkan_drivers swrast%{?base_vulkan}%{?intel_platform_vulkan}%{?extra_platform_vulkan}%{?with_nvk:,nouveau}
-
+%global vulkan_drivers swrast,virtio%{?base_vulkan}%{?intel_platform_vulkan}%{?extra_platform_vulkan}%{?with_nvk:,nouveau}
 %global toolchain clang
 %define _disable_source_fetch 0
 
 Name:           mesa
 Summary:        Mesa graphics libraries
-%global ver 24.2.7
+%global ver 24.3.0
 Version:        %{lua:ver = string.gsub(rpm.expand("%{ver}"), "-", "~"); print(ver)}
 Release:        10.clang%{?dist}
 License:        MIT AND BSD-3-Clause AND SGI-B-2.0
@@ -83,6 +82,10 @@ Source0:        https://archive.mesa3d.org/mesa-%{ver}.tar.xz
 Source1:        https://src.fedoraproject.org/rpms/mesa/raw/rawhide/f/Mesa-MLAA-License-Clarification-Email.txt
 
 Patch10:        https://src.fedoraproject.org/rpms/mesa/raw/rawhide/f/gnome-shell-glthread-disable.patch
+
+# silence some vulkan loader issues
+Patch20:        https://src.fedoraproject.org/rpms/mesa/raw/rawhide/f/broadcom-fix-init-error.patch
+Patch21:        https://src.fedoraproject.org/rpms/mesa/raw/rawhide/f/0001-venus-handle-device-probing-properly.patch
 
 BuildRequires:  meson >= 1.3.0
 BuildRequires:  gcc
@@ -409,7 +412,6 @@ export MESON_PACKAGE_CACHE_DIR="%{cargo_registry}/"
 
 %meson \
   -Dplatforms=x11,wayland \
-  -Ddri3=enabled \
   -Dosmesa=true \
   --buildtype=release \
 %if 0%{?with_hardware}
@@ -518,6 +520,7 @@ popd
 %{_libdir}/pkgconfig/osmesa.pc
 
 %files libgbm
+%{_libdir}/gbm/dri_gbm.so
 %{_libdir}/libgbm.so.1
 %{_libdir}/libgbm.so.1.*
 %files libgbm-devel
@@ -697,6 +700,8 @@ popd
 %files vulkan-drivers
 %{_libdir}/libvulkan_lvp.so
 %{_datadir}/vulkan/icd.d/lvp_icd.*.json
+%{_libdir}/libvulkan_virtio.so
+%{_datadir}/vulkan/icd.d/virtio_icd.*.json
 %{_libdir}/libVkLayer_MESA_device_select.so
 %{_datadir}/vulkan/implicit_layer.d/VkLayer_MESA_device_select.json
 %if 0%{?with_vulkan_hw}
