@@ -7,11 +7,12 @@
 %global default_font_path "catalogue:/etc/X11/fontpath.d,built-ins"
 
 %global toolchain clang
+%define _disable_source_fetch 0
 
 Summary:   Xwayland
 Name:      xorg-x11-server-Xwayland
-Version:   24.1.4
-Release:   10.clang%{?dist}
+Version:   24.1.5
+Release:   11.clang%{?dist}
 
 URL:       http://www.x.org
 %if 0%{?gitdate}
@@ -102,7 +103,7 @@ necessary for developing Wayland compositors using Xwayland.
 %autosetup -S git_am -n %{pkgname}-%{?gitdate:%{commit}}%{!?gitdate:%{version}}
 
 %build
-%meson \
+CFLAGS="-O2 -flto=thin -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Werror=format-security -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS --config=/usr/lib/rpm/redhat/redhat-hardened-clang.cfg -fstack-protector-strong   -m64 -march=skylake -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer" %meson \
 	%{?gitdate:-Dxwayland=true -D{xorg,xnest,xvfb,udev}=false} \
         -Ddefault_font_path=%{default_font_path} \
         -Dbuilder_string="Build ID: %{name} %{version}-%{release}" \
@@ -137,6 +138,16 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/*.desktop
 %{_libdir}/pkgconfig/xwayland.pc
 
 %changelog
+* Wed Feb  5 2025 Olivier Fourdan <ofourdan@redhat.com> - 24.1.5-1
+- xwayland 24.1.5
+
+* Sun Jan 19 2025 Fedora Release Engineering <releng@fedoraproject.org> - 24.1.4-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_42_Mass_Rebuild
+
+* Tue Oct 29 2024 Olivier Fourdan <ofourdan@redhat.com> - 24.1.4-1
+- xwayland 24.1.4 - (#2316081)
+  CVE fix for: CVE-2024-9632
+
 * Wed Oct  2 2024 Olivier Fourdan <ofourdan@redhat.com> - 24.1.3-1
 - xwayland 24.1.3 - (#2313799)
 
@@ -184,7 +195,7 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/*.desktop
   CVE-2024-0408, CVE-2024-0409
 
 * Wed Dec 13 2023 Peter Hutterer <peter.hutterer@redhat.com> - 23.2.3-1
-- xwayland 23.2.3 
+- xwayland 23.2.3
   CVE fix for: CVE-2023-6377, CVE-2023-6478
 
 * Fri Nov 24 2023 Olivier Fourdan <ofourdan@redhat.com> - 23.2.2-2
