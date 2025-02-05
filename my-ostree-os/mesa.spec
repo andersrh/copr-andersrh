@@ -71,7 +71,7 @@ Name:           mesa
 Summary:        Mesa graphics libraries
 %global ver 24.3.4
 Version:        %{lua:ver = string.gsub(rpm.expand("%{ver}"), "-", "~"); print(ver)}
-Release:        11.clang%{?dist}
+Release:        12.clang.skylake%{?dist}
 License:        MIT AND BSD-3-Clause AND SGI-B-2.0
 URL:            http://www.mesa3d.org
 
@@ -85,6 +85,10 @@ Patch10:        https://src.fedoraproject.org/rpms/mesa/raw/rawhide/f/gnome-shel
 
 # https://bugzilla.redhat.com/show_bug.cgi?id=2333711
 Patch11:        https://src.fedoraproject.org/rpms/mesa/raw/rawhide/f/0001-egl-never-select-swrast-for-vmwgfx.patch
+
+# https://gitlab.freedesktop.org/mesa/mesa/-/issues/12310
+# https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/33248
+Patch12:        https://gitlab.freedesktop.org/mesa/mesa/-/commit/3b78dcec058e.patch#/mesa-24.3.4-radeonsi-disallow-compute-queues-on-Raven_Raven2-due-to-hangs.patch
 
 BuildRequires:  meson >= 1.3.0
 BuildRequires:  gcc
@@ -203,7 +207,7 @@ Recommends:     %{name}-dri-drivers%{?_isa} = %{?epoch:%{epoch}:}%{version}-%{re
 
 %package libGL-devel
 Summary:        Mesa libGL development package
-Requires:       %{name}-libGL%{?_isa} = %{?epoch:%{epoch}:}%{version}-%{release}
+Requires:       (%{name}-libGL%{?_isa} = %{?epoch:%{epoch}:}%{version}-%{release} if %{name}-libGL%{?_isa})
 Requires:       libglvnd-devel%{?_isa} >= 1:1.3.2
 Provides:       libGL-devel
 Provides:       libGL-devel%{?_isa}
@@ -224,7 +228,7 @@ Recommends:     %{name}-dri-drivers%{?_isa} = %{?epoch:%{epoch}:}%{version}-%{re
 
 %package libEGL-devel
 Summary:        Mesa libEGL development package
-Requires:       %{name}-libEGL%{?_isa} = %{?epoch:%{epoch}:}%{version}-%{release}
+Requires:       (%{name}-libEGL%{?_isa} = %{?epoch:%{epoch}:}%{version}-%{release} if %{name}-libEGL%{?_isa})
 Requires:       libglvnd-devel%{?_isa} >= 1:1.3.2
 Requires:       %{name}-khr-devel%{?_isa}
 Provides:       libEGL-devel
@@ -409,7 +413,7 @@ export MESON_PACKAGE_CACHE_DIR="%{cargo_registry}/"
 # Disable LTO for now
 %define _lto_cflags %{nil}
 
-CFLAGS="$CFLAGS -march=skylake" CXXFLAGS="$CXXFLAGS -march=skylake" %meson \
+CFLAGS="$CFLAGS -march=skylake -mtune=skylake" CXXFLAGS="$CXXFLAGS -march=skylake -mtune=skylake" %meson \
   -Dplatforms=x11,wayland \
   -Dosmesa=true \
   --buildtype=release \
