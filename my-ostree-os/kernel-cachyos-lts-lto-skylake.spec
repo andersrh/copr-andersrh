@@ -2,6 +2,7 @@
 
 # Fedora bits
 %define __spec_install_post %{__os_install_post}
+%define _build_id_links none
 %define _default_patch_fuzz 2
 %define _disable_source_fetch 0
 %define debug_package %{nil}
