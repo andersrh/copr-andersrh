@@ -12,7 +12,7 @@
 Summary:   Xwayland
 Name:      xorg-x11-server-Xwayland
 Version:   24.1.5
-Release:   11.clang%{?dist}
+Release:   13.clang.skylake%{?dist}
 
 URL:       http://www.x.org
 %if 0%{?gitdate}
@@ -103,7 +103,7 @@ necessary for developing Wayland compositors using Xwayland.
 %autosetup -S git_am -n %{pkgname}-%{?gitdate:%{commit}}%{!?gitdate:%{version}}
 
 %build
-CFLAGS="-O2 -flto=thin -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Werror=format-security -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS --config=/usr/lib/rpm/redhat/redhat-hardened-clang.cfg -fstack-protector-strong   -m64 -march=skylake -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer" %meson \
+CFLAGS="$CFLAGS -march=skylake -mtune=skylake -O3" CXXFLAGS="$CXXFLAGS -march=skylake -mtune=skylake -O3" %meson \
 	%{?gitdate:-Dxwayland=true -D{xorg,xnest,xvfb,udev}=false} \
         -Ddefault_font_path=%{default_font_path} \
         -Dbuilder_string="Build ID: %{name} %{version}-%{release}" \
