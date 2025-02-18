@@ -12,7 +12,7 @@
 Summary:   Xwayland
 Name:      xorg-x11-server-Xwayland
 Version:   24.1.5
-Release:   13.clang.skylake%{?dist}
+Release:   15.clang.skylake%{?dist}
 
 URL:       http://www.x.org
 %if 0%{?gitdate}
