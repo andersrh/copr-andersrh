@@ -94,6 +94,7 @@ BuildRequires:  meson >= 1.3.0
 BuildRequires:  gcc
 BuildRequires:  gcc-c++
 BuildRequires:  clang
+BuildRequires:  lld
 BuildRequires:  gettext
 %if 0%{?with_hardware}
 BuildRequires:  kernel-headers
@@ -393,7 +394,7 @@ cp %{SOURCE1} docs/
 
 %build
 # ensure standard Rust compiler flags are set
-export RUSTFLAGS="%build_rustflags"
+export RUSTFLAGS="%build_rustflags -C lto=thin -C linker-plugin-lto -C target-cpu=skylake -C link-arg=-fuse-ld=lld"
 
 %if 0%{?with_nvk}
 export MESON_PACKAGE_CACHE_DIR="%{cargo_registry}/"
