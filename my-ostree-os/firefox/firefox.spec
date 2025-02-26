@@ -193,7 +193,7 @@ ExcludeArch: i686
 Summary:        Mozilla Firefox Web browser
 Name:           firefox
 Version:        135.0.1
-Release:        10.skylake%{?pre_tag}%{?dist}
+Release:        11.skylake%{?pre_tag}%{?dist}
 URL:            https://www.mozilla.org/firefox/
 # Automatically converted from old format: MPLv1.1 or GPLv2+ or LGPLv2+ - review is highly recommended.
 License:        LicenseRef-Callaway-MPLv1.1 OR GPL-2.0-or-later OR LicenseRef-Callaway-LGPLv2+
@@ -631,7 +631,7 @@ echo "ac_add_options --disable-webrtc" >> .mozconfig
 echo "ac_add_options --enable-debug" >> .mozconfig
 echo "ac_add_options --disable-optimize" >> .mozconfig
 %else
-%global optimize_flags "-O3 -march=skylake -mtune=skylake"
+%global optimize_flags "-O3 -march=skylake -mtune=skylake -flto"
 %ifarch ppc64le aarch64
 %global optimize_flags "-g -O2"
 %endif
