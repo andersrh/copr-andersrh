@@ -95,6 +95,7 @@ BuildRequires:  gcc
 BuildRequires:  gcc-c++
 BuildRequires:  clang
 BuildRequires:  lld
+BuildRequires:  polly
 BuildRequires:  gettext
 %if 0%{?with_hardware}
 BuildRequires:  kernel-headers
@@ -409,7 +410,7 @@ export MESON_PACKAGE_CACHE_DIR="%{cargo_registry}/"
 %rewrite_wrap_file paste
 %endif
 
-CFLAGS="$CFLAGS -march=skylake -mtune=skylake -O3" CXXFLAGS="$CXXFLAGS -march=skylake -mtune=skylake -O3" %meson \
+CFLAGS="$CFLAGS -march=skylake -mtune=skylake -O3 -fplugin=/usr/lib64/llvm19/lib/libPolly.so.19.1 -mllvm -polly" CXXFLAGS="$CXXFLAGS -march=skylake -mtune=skylake -O3 -fplugin=/usr/lib64/llvm19/lib/libPolly.so.19.1 -mllvm -polly" %meson \
   -Dplatforms=x11,wayland \
   -Dosmesa=true \
   --buildtype=release \
