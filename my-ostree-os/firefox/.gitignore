@@ -1,0 +1,7 @@
+*.source.tar.xz
+firefox*.tar.xz
+wasi-sdk-*.tar.gz
+/wasm-component-ld-vendor.tar.xz
+/mochitest-python.tar.gz
+/dump_syms-vendor.tar.xz
+/cbindgen-vendor.tar.xz
