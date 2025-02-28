@@ -13,7 +13,7 @@
 
 # Linux Kernel Versions
 %define _basekver 6.12
-%define _stablekver 16
+%define _stablekver 17
 %define _rpmver %{version}-%{release}
 %define _kver %{_rpmver}.%{_arch}
 
@@ -121,7 +121,7 @@ Source1:        https://raw.githubusercontent.com/CachyOS/linux-cachyos/master/l
 # The default modprobed.db provided is used for linux-cachyos CI.
 # This should not be used for production and ideally should only be used for compile tests.
 # Note that any modprobed.db file is accepted
-Source2:        https://raw.githubusercontent.com/CachyOS/linux-cachyos/master/modprobed.db
+Source2:        https://raw.githubusercontent.com/Frogging-Family/linux-tkg/master/linux-tkg-config/%{_basekver}/minimal-modprobed.db
 %endif
 
 %if %{_build_nv}
@@ -377,7 +377,8 @@ Recommends:     linux-firmware
 
 %files core
     %license COPYING
-    %ghost /boot/initramfs-%{_kver}.img
+    %ghost %attr(0600, root, root) /boot/initramfs-%{_kver}.img
+    %ghost %attr(0644, root, root) /boot/symvers-%{_kver}.zst
     %{_kernel_dir}/vmlinuz
     %{_kernel_dir}/modules.builtin
     %{_kernel_dir}/modules.builtin.modinfo
