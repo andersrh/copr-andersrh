@@ -69,7 +69,7 @@
 
 Name:           mesa
 Summary:        Mesa graphics libraries
-%global ver 25.0.1
+%global ver 25.0.3
 Version:        %{lua:ver = string.gsub(rpm.expand("%{ver}"), "-", "~"); print(ver)}
 Release:        10.clang.skylake%{?dist}
 License:        MIT AND BSD-3-Clause AND SGI-B-2.0
@@ -79,9 +79,22 @@ Source0:        https://archive.mesa3d.org/mesa-%{ver}.tar.xz
 # src/gallium/auxiliary/postprocess/pp_mlaa* have an ... interestingly worded license.
 # Source1 contains email correspondence clarifying the license terms.
 # Fedora opts to ignore the optional part of clause 2 and treat that code as 2 clause BSD.
-Source1:        https://src.fedoraproject.org/rpms/mesa/raw/f41/f/Mesa-MLAA-License-Clarification-Email.txt
+Source1:        Mesa-MLAA-License-Clarification-Email.txt
 
-Patch10:        https://src.fedoraproject.org/rpms/mesa/raw/f41/f/gnome-shell-glthread-disable.patch
+Patch10:        gnome-shell-glthread-disable.patch
+
+# Backport of https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/33805
+# to fix clover with libclc from LLVM 20.
+Patch20:        e4eb5e80c316c0af3fff310ca89e1175d81556c1.patch
+
+# Backport of https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/32038
+# and fixes: vulkan/wsi: implement the Wayland color management protocol
+Patch21:        0001-increase-required-wayland-protocols-version-to-1.41.patch
+Patch22:        0002-vulkan-wsi-implement-the-Wayland-color-management-pr.patch
+Patch23:        0003-vulkan-wsi-implement-support-for-VK_EXT_hdr_metadata.patch
+Patch24:        0004-vulkan-wsi-handle-the-compositor-not-supporting-exte.patch
+Patch25:        0001-meson-update-wayland-protocols-source_hash.patch
+Patch26:        0001-docs-features-add-VK_EXT_hdr_metadata.patch
 
 BuildRequires:  meson >= 1.3.0
 BuildRequires:  gcc
@@ -318,7 +331,7 @@ Provides:       libxatracker-devel%{?_isa}
 %if 0%{?with_opencl}
 %package libOpenCL
 Summary:        Mesa OpenCL runtime library
-Requires:       ocl-icd%{?_isa}
+Requires:       (ocl-icd%{?_isa} or OpenCL-ICD-Loader%{?_isa})
 Requires:       libclc%{?_isa}
 Requires:       %{name}-libgbm%{?_isa} = %{?epoch:%{epoch}:}%{version}-%{release}
 Requires:       opencl-filesystem
