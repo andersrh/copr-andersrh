@@ -1,4 +1,4 @@
-# Maintainer: Eric Naim <dnaim@cachyos.org>
+# Maintainer: Anders Rytter Hansen
 
 # Fedora bits
 %define __spec_install_post %{__os_install_post}
@@ -13,7 +13,7 @@
 
 # Linux Kernel Versions
 %define _basekver 6.12
-%define _stablekver 29
+%define _stablekver 30
 %define _rpmver %{version}-%{release}
 %define _kver %{_rpmver}.%{_arch}
 
