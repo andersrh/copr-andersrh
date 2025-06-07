@@ -65,7 +65,7 @@
 
 %if %{_build_lto}
     # Define build environment variables to build the kernel with clang
-    %define _lto_args CC=clang CXX=clang++ LD=ld.lld LLVM=1 LLVM_IAS=1
+    %define _lto_args CC=gcc CXX=g++ LD=ld.bfd
 %endif
 
 %define _module_args KERNEL_UNAME=%{_kver} IGNORE_PREEMPT_RT_PRESENCE=1 SYSSRC=%{_builddir}/linux-%{_tarkver} SYSOUT=%{_builddir}/linux-%{_tarkver}
@@ -103,12 +103,6 @@ BuildRequires:  python3-devel
 BuildRequires:  python3-pyyaml
 BuildRequires:  python-srpm-macros
 
-%if %{_build_lto}
-BuildRequires:  clang
-BuildRequires:  lld
-BuildRequires:  llvm
-%endif
-
 %if %{_build_nv}
 BuildRequires:  gcc-c++
 %endif
@@ -131,9 +125,6 @@ Source10:       https://github.com/NVIDIA/open-gpu-kernel-modules/archive/%{_nv_
 Patch0:         %{_patch_src}/all/0001-cachyos-base-all.patch
 Patch1:         %{_patch_src}/sched/0001-bore-cachy.patch
 
-%if %{_build_lto}
-Patch2:         %{_patch_src}/misc/dkms-clang.patch
-%endif
 
 %if %{_build_nv}
 Patch10:        %{_patch_src}/misc/nvidia/%{?_nv_old:565}/0001-Make-modeset-and-fbdev-default-enabled.patch
@@ -184,7 +175,7 @@ Patch13:        %{_patch_src}/misc/nvidia/565/0005-nvkms-Sanitize-trim-ELD-produ
     scripts/config -e MSKYLAKE
 
     %if %{_build_lto}
-        scripts/config -e LTO_CLANG_THIN
+        scripts/config -e LTO
     %endif
 
     %if %{_build_minimal}
