@@ -65,7 +65,8 @@
 
 %if %{_build_lto}
     # Define build environment variables to build the kernel with clang
-    %define _lto_args CC=gcc CXX=g++ LD=ld.bfd
+    %define _lto_args CC=gcc CXX=g++ LD=ld.bfd 
+    #KCFLAGS="-flto -ffat-lto-objects" KCPPFLAGS="-flto -ffat-lto-objects"
 %endif
 
 %define _module_args KERNEL_UNAME=%{_kver} IGNORE_PREEMPT_RT_PRESENCE=1 SYSSRC=%{_builddir}/linux-%{_tarkver} SYSOUT=%{_builddir}/linux-%{_tarkver}
@@ -176,6 +177,9 @@ Patch13:        %{_patch_src}/misc/nvidia/565/0005-nvkms-Sanitize-trim-ELD-produ
 
     %if %{_build_lto}
         scripts/config -e LTO
+        scripts/config -e LTO_GCC
+        scripts/config -d LTO_CLANG
+        scripts/config -d LTO_CLANG_THIN
     %endif
 
     %if %{_build_minimal}
