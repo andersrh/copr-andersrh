@@ -71,7 +71,7 @@ Name:           mesa
 Summary:        Mesa graphics libraries
 %global ver 25.0.7
 Version:        %{lua:ver = string.gsub(rpm.expand("%{ver}"), "-", "~"); print(ver)}
-Release:        10.clang.skylake%{?dist}
+Release:        11.clang.skylake%{?dist}
 License:        MIT AND BSD-3-Clause AND SGI-B-2.0
 URL:            http://www.mesa3d.org
 
@@ -119,6 +119,7 @@ BuildRequires:  gcc
 BuildRequires:  gcc-c++
 BuildRequires:  clang
 BuildRequires:  lld
+BuildRequires:  polly
 BuildRequires:  gettext
 %if 0%{?with_hardware}
 BuildRequires:  kernel-headers
@@ -418,7 +419,7 @@ export MESON_PACKAGE_CACHE_DIR="%{cargo_registry}/"
 %rewrite_wrap_file paste
 %endif
 
-CFLAGS="$CFLAGS -march=skylake -mtune=skylake -O3" CXXFLAGS="$CXXFLAGS -march=skylake -mtune=skylake -O3" %meson \
+CFLAGS="$CFLAGS -march=skylake -mtune=skylake -O3 -mllvm -polly" CXXFLAGS="$CXXFLAGS -march=skylake -mtune=skylake -O3 -mllvm -polly" %meson \
   -Dplatforms=x11,wayland \
   -Dosmesa=true \
   --buildtype=release \
