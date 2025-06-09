@@ -419,7 +419,7 @@ export MESON_PACKAGE_CACHE_DIR="%{cargo_registry}/"
 %rewrite_wrap_file paste
 %endif
 
-CFLAGS="$CFLAGS -march=skylake -mtune=skylake -O3 -mllvm -polly" CXXFLAGS="$CXXFLAGS -march=skylake -mtune=skylake -O3 -mllvm -polly" %meson \
+CFLAGS="$CFLAGS -march=skylake -mtune=skylake -O3 -fplugin=LLVMPolly.so -mllvm -polly" CXXFLAGS="$CXXFLAGS -march=skylake -mtune=skylake -O3 -fplugin=LLVMPolly.so -mllvm -polly" %meson \
   -Dplatforms=x11,wayland \
   -Dosmesa=true \
   --buildtype=release \
