@@ -107,7 +107,6 @@ BuildRequires:  python-srpm-macros
 BuildRequires:  clang
 BuildRequires:  lld
 BuildRequires:  llvm
-BuildRequires:  polly
 %endif
 
 %if %{_build_nv}
@@ -134,7 +133,6 @@ Patch1:         %{_patch_src}/sched/0001-bore-cachy.patch
 
 %if %{_build_lto}
 Patch2:         %{_patch_src}/misc/dkms-clang.patch
-Patch3:         %{_patch_src}/misc/0001-clang-polly.patch
 %endif
 
 %if %{_build_nv}
@@ -182,7 +180,6 @@ Patch10:        %{_patch_src}/misc/nvidia/0001-Enable-atomic-kernel-modesetting-
 
     %if %{_build_lto}
         scripts/config -e LTO_CLANG_THIN
-        scripts/config -e POLLY_CLANG
     %endif
 
     %if %{_build_minimal}
