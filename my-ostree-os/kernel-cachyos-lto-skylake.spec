@@ -12,8 +12,8 @@
 %undefine _include_frame_pointers
 
 # Linux Kernel Versions
-%define _basekver 6.15
-%define _stablekver 10
+%define _basekver 6.16
+%define _stablekver 2
 %define _rpmver %{version}-%{release}
 %define _kver %{_rpmver}.%{_arch}
 
@@ -174,9 +174,6 @@ Patch10:        %{_patch_src}/misc/nvidia/0001-Enable-atomic-kernel-modesetting-
         echo "Invalid x86_64 ISA Level. Using x86_64_v3"
         scripts/config --set-val X86_64_VERSION 3
     %endif
-
-    scripts/config -d GENERIC_CPU
-    scripts/config -e MSKYLAKE
 
     %if %{_build_lto}
         scripts/config -e LTO_CLANG_THIN
