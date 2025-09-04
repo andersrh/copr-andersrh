@@ -73,7 +73,7 @@
 Name:           kernel-cachyos-lts%{?_lto_args:-lto}-skylake
 Summary:        Linux BORE %{?_lto_args:+ LTO }Cachy Sauce Kernel by CachyOS with other patches and improvements.
 Version:        %{_basekver}.%{_stablekver}
-Release:        cachylts1%{?_lto_args:.lto}.skylake%{?dist}
+Release:        cachylts2%{?_lto_args:.lto}.skylake%{?dist}
 License:        GPL-2.0-only
 URL:            https://cachyos.org
 
@@ -128,11 +128,11 @@ Source2:        https://raw.githubusercontent.com/Frogging-Family/linux-tkg/mast
 Source10:       https://github.com/NVIDIA/open-gpu-kernel-modules/archive/%{_nv_ver}/%{_nv_pkg}.tar.gz
 %endif
 
-Patch0:         %{_patch_src}/all/0001-cachyos-base-all.patch
-Patch1:         %{_patch_src}/sched/0001-bore-cachy.patch
+#Patch0:         %{_patch_src}/all/0001-cachyos-base-all.patch
+Patch0:         https://raw.githubusercontent.com/firelzrd/bore-scheduler/refs/heads/main/patches/stable/linux-6.12-bore/0001-linux6.12.37-bore-6.4.0.patch
 
 %if %{_build_lto}
-Patch2:         %{_patch_src}/misc/dkms-clang.patch
+Patch1:         %{_patch_src}/misc/dkms-clang.patch
 %endif
 
 %if %{_build_nv}
