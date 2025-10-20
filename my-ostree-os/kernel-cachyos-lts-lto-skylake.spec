@@ -13,7 +13,7 @@
 
 # Linux Kernel Versions
 %define _basekver 6.12
-%define _stablekver 53
+%define _stablekver 54
 %define _rpmver %{version}-%{release}
 %define _kver %{_rpmver}.%{_arch}
 
