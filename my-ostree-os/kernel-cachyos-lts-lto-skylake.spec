@@ -73,7 +73,7 @@
 Name:           kernel-cachyos-lts%{?_lto_args:-lto}-skylake
 Summary:        Linux BORE %{?_lto_args:+ LTO }Cachy Sauce Kernel by CachyOS with other patches and improvements.
 Version:        %{_basekver}.%{_stablekver}
-Release:        cachylts1%{?_lto_args:.lto}.skylake%{?dist}
+Release:        cachylts2%{?_lto_args:.lto}.skylake%{?dist}
 License:        GPL-2.0-only
 URL:            https://cachyos.org
 
@@ -134,6 +134,8 @@ Patch1:         %{_patch_src}/sched/0001-bore-cachy.patch
 %if %{_build_lto}
 Patch2:         %{_patch_src}/misc/dkms-clang.patch
 %endif
+
+Patch3: https://raw.githubusercontent.com/firelzrd/kcompressd-unofficial/refs/heads/main/patches/stable/0001-linux6.12.44-kcompressd-unofficial-0.5.patch
 
 %if %{_build_nv}
 Patch10:        %{_patch_src}/misc/nvidia/%{?_nv_old:565}/0001-Make-modeset-and-fbdev-default-enabled.patch
