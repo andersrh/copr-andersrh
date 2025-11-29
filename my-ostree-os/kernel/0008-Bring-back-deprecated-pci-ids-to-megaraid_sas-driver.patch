@@ -13,7 +13,7 @@ index bf57fd3b9..0eaed98ac 100644
 +++ b/drivers/scsi/megaraid/megaraid_sas_base.c
 @@ -149,7 +149,7 @@ megasas_set_ld_removed_by_fw(struct megasas_instance *instance);
   */
- static struct pci_device_id megasas_pci_table[] = {
+ static const struct pci_device_id megasas_pci_table[] = {
  
 -#ifndef CONFIG_RHEL_DIFFERENCES
 +#ifndef CONFIG_ALMALINUX_DIFFERENCES

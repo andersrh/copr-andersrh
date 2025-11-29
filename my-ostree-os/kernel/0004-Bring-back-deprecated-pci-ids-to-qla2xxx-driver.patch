@@ -14,7 +14,7 @@ index 26089872a..8018c68f2 100644
 @@ -8123,7 +8123,7 @@ static const struct pci_error_handlers qla2xxx_err_handler = {
  };
  
- static struct pci_device_id qla2xxx_pci_tbl[] = {
+ static const struct pci_device_id qla2xxx_pci_tbl[] = {
 -#ifndef CONFIG_RHEL_DIFFERENCES
 +#ifndef CONFIG_ALMALINUX_DIFFERENCES
  	{ PCI_DEVICE(PCI_VENDOR_ID_QLOGIC, PCI_DEVICE_ID_QLOGIC_ISP2100) },
