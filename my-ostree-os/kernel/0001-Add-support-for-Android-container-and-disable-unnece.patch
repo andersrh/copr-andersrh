@@ -1,0 +1,74 @@
+From 5c7a64a5034b59607558361fb7309b425ee4b1a5 Mon Sep 17 00:00:00 2001
+From: Anders da Silva Rytter Hansen <andersrh@users.noreply.github.com>
+Date: Sun, 30 Nov 2025 10:09:30 -0300
+Subject: [PATCH] Add support for Android container and disable unnecessary
+ kernels such as RT etc.
+
+---
+ my-ostree-os/kernel/kernel.spec | 30 ++++++++++++++++++++++--------
+ 1 file changed, 22 insertions(+), 8 deletions(-)
+
+diff --git a/my-ostree-os/kernel/kernel.spec b/my-ostree-os/kernel/kernel.spec
+index 2f11cd8..ae9abc3 100644
+--- a/my-ostree-os/kernel/kernel.spec
++++ b/my-ostree-os/kernel/kernel.spec
+@@ -172,7 +172,7 @@ Summary: The Linux kernel
+ #  to build the base kernel using the debug configuration. (Specifying
+ #  the --with-release option overrides this setting.)
+ %define debugbuildsenabled 1
+-# define buildid .local
++%define buildid .andersdsrhcustom1
+ %define specrpmversion 6.12.0
+ %define specversion 6.12.0
+ %define patchversion 6.12
+@@ -213,19 +213,19 @@ Summary: The Linux kernel
+ # build the base variants
+ %define with_base      %{?_without_base:      0} %{?!_without_base:      1}
+ # build also debug variants
+-%define with_debug     %{?_without_debug:     0} %{?!_without_debug:     1}
++%define with_debug     0
+ # kernel-zfcpdump (s390 specific kernel for zfcpdump)
+-%define with_zfcpdump  %{?_without_zfcpdump:  0} %{?!_without_zfcpdump:  1}
++%define with_zfcpdump  0
+ # kernel-16k (aarch64 kernel with 16K page_size)
+-%define with_arm64_16k %{?_with_arm64_16k:    1} %{?!_with_arm64_16k:    0}
++%define with_arm64_16k 0
+ # kernel-64k (aarch64 kernel with 64K page_size)
+-%define with_arm64_64k %{?_without_arm64_64k: 0} %{?!_without_arm64_64k: 1}
++%define with_arm64_64k 0
+ # kernel-rt (x86_64 and aarch64 only PREEMPT_RT enabled kernel)
+-%define with_realtime  %{?_without_realtime:  0} %{?!_without_realtime:  1}
++%define with_realtime  0
+ # kernel-rt-64k (aarch64 RT kernel with 64K page_size)
+-%define with_realtime_arm64_64k %{?_without_realtime_arm64_64k: 0} %{?!_without_realtime_arm64_64k: 1}
++%define with_realtime_arm64_64k 0
+ # kernel-automotive (x86_64 and aarch64 with PREEMPT_RT enabled - currently off by default)
+-%define with_automotive %{?_with_automotive:  1} %{?!_with_automotive:   0}
++%define with_automotive 0
+ 
+ # Supported variants
+ #            with_base with_debug    with_gcov
+@@ -2265,6 +2265,20 @@ InitBuildVars() {
+     sed -i 's/^\(CONFIG_DEBUG_INFO.*\)=y/# \1 is not set/' .config
+ %endif
+ 
++    sed -i \
++    -e "/CONFIG_ANDROID_BINDER_IPC/d" \
++    -e "/CONFIG_ANDROID_BINDERFS/d" \
++    -e "/CONFIG_ANDROID_BINDER_DEVICES/d" \
++    -e "/CONFIG_ANDROID_BINDER_IPC_SELFTEST/d" .config \
++    -e "/CONFIG_PSI_DEFAULT_DISABLED/d" .config
++
++    echo -e "\n# Custom Android Binder Settings" >> .config
++    echo "CONFIG_ANDROID_BINDER_IPC=y" >> .config
++    echo "CONFIG_ANDROID_BINDERFS=y" >> .config
++    echo "CONFIG_ANDROID_BINDER_DEVICES=\"binder,hwbinder,vndbinder\"" >> .config
++    echo "CONFIG_ANDROID_BINDER_IPC_SELFTEST=n" >> .config
++    echo "CONFIG_PSI_DEFAULT_DISABLED=n" >> .config
++
+     Arch=`head -1 .config | cut -b 3-`
+     %{log_msg "InitBuildVars: USING ARCH=$Arch"}
+ 
+-- 
+2.52.0
+
