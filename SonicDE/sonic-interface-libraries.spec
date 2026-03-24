@@ -132,4 +132,4 @@ Development files for sonic-interface-libraries.
 
 %changelog
 * Wed Mar 21 2026 Anders da Silva Rytter Hansen <andersrh@users.noreply.github.com> - 6.4.5-7
-- Initial release for SonicDE (Downgraded to 6.4.5 for EL 10.1)
+- Initial release of SonicDE/KDE Plasma X11 for EL10 (Downgraded to 6.4.5 for EL 10.1 compatibility)
